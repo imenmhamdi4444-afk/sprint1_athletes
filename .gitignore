@@ -1,0 +1,19 @@
+# Root gitignore - Sprint 1 Athletes (Microservices Architecture)
+
+# Java / Maven (Backends)
+**/target/
+**/.settings/
+**/.classpath
+**/.project
+**/.DS_Store
+
+# Node / Angular (Frontend)
+**/node_modules/
+**/dist/
+**/.angular/
+**/.vscode/
+
+# OS / IDE
+.idea/
+.DS_Store
+Thumbs.db

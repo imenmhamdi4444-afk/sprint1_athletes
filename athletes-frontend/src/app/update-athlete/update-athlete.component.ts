@@ -1,0 +1,50 @@
+import { Component, OnInit } from '@angular/core';
+import { Athlete } from '../model/athlete.model';
+import { Equipe } from '../model/equipe.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AthleteService } from '../services/athlete.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-update-athlete',
+  standalone: true,
+  imports: [FormsModule, CommonModule],
+  templateUrl: './update-athlete.component.html',
+  styleUrl: './update-athlete.component.css'
+})
+export class UpdateAthleteComponent implements OnInit {
+  currentAthlete = new Athlete();
+  equipes: Equipe[] = [];
+  updatedCodeEquipe: number = 0;
+
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private athleteService: AthleteService
+  ) { }
+
+  ngOnInit(): void {
+    this.athleteService.listeEquipes().subscribe(eqs => {
+      console.log(eqs);
+      this.equipes = eqs._embedded.equipes;
+    });
+
+    this.athleteService.consulterAthlete(this.activatedRoute.snapshot.params['id'])
+      .subscribe(ath => {
+        this.currentAthlete = ath;
+        this.updatedCodeEquipe = this.currentAthlete.equipe ? this.currentAthlete.equipe.codeEquipe : 0;
+      });
+  }
+
+  updateAthlete(): void {
+    if (this.updatedCodeEquipe && this.updatedCodeEquipe != 0) {
+      this.currentAthlete.equipe = this.equipes.find(eq => eq.codeEquipe == this.updatedCodeEquipe);
+    } else {
+      this.currentAthlete.equipe = undefined;
+    }
+    this.athleteService.updateAthlete(this.currentAthlete).subscribe(() => {
+      this.router.navigate(['athletes']);
+    });
+  }
+}

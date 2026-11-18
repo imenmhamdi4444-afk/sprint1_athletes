@@ -1,0 +1,62 @@
+<div class="container mt-4">
+  <form class="form-inline mb-3">
+    <div class="form-group mx-sm-3 mb-2">
+      <label class="me-2">Nom Athlète</label>
+      <input class="form-control d-inline-block w-auto me-2" [(ngModel)]="nomAthlete" name="nomAthlete">
+      <button class="btn btn-primary" (click)="rechercherAthletes()">Rechercher</button>
+    </div>
+  </form>
+
+  <form class="form-inline mb-3">
+    <div class="form-group mx-sm-3 mb-2">
+      <label class="me-2">Nom Athlète en tapant</label>
+      <input #nom [(ngModel)]="searchTerm" name="searchTerm" class="form-control d-inline-block w-auto">
+    </div>
+  </form>
+
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Nom</th>
+            <th>Nationalité</th>
+            <th>Sport</th>
+            <th>Date Naissance</th>
+            <th>Équipe</th>
+            @if (authService.isAdmin()) {
+              <th>Actions</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (athlete of athletes | searchFilter:searchTerm; track athlete.idAthlete) {
+            <tr>
+              <td>{{athlete.idAthlete}}</td>
+              <td>{{athlete.nomComplet}}</td>
+              <td>{{athlete.nationalite}}</td>
+              <td>{{athlete.sport}}</td>
+              <td>{{athlete.dateNaissance | date:'dd/MM/yyyy'}}</td>
+              @if (athlete.equipe) {
+                <td>{{athlete.equipe.nomEquipe}}</td>
+              } @else {
+                <td>Individuel</td>
+              }
+              @if (authService.isAdmin()) {
+                <td>
+                  <a class="btn btn-danger btn-sm me-2" (click)="supprimerAthlete(athlete)">Supprimer</a>
+                  <a class="btn btn-success btn-sm" [routerLink]="['/updateAthlete', athlete.idAthlete]">Modifier</a>
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center text-danger fw-bold">Aucun athlète trouvé !</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
